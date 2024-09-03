@@ -17,9 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from core.views import ExportPrizesView
+from core.views import ExportPrizesView, CreatePlayerLevelView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('prizes/export/', ExportPrizesView.as_view(), name='export_prizes'),
+    path('level/', CreatePlayerLevelView.as_view(), name='create_level')
 ]
