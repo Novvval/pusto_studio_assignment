@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: on-failure
+    env_file:
+      - ./src/.env
+    healthcheck:
+      test: pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_USER}
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    ports:
+      - "5432:5432"
+
+  web:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      restart: always
+      tty: true
+      stdin_open: true
+      volumes:
+        - ./src:/app/src
+      env_file:
+        - ./src/.env
+      environment:
+        DB_HOST: postgres
+      ports:
+        - "8000:8000"
+      depends_on:
+        postgres:
+          condition: service_healthy
+
+volumes:
+  postgres_data:
