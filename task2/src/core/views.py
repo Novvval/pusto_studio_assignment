@@ -1,11 +1,12 @@
 from django.db.models import Prefetch
+from django.http import StreamingHttpResponse
 from rest_framework.views import APIView
 
 from .models import PlayerPrize, PlayerLevel, Prize
 from .service import PrizeExportService
 
 
-def csv_serializer(data):
+def csv_serializer(data: PlayerPrize) -> list[str | bool]:
     return [
         data.player_level.player.player_id,
         data.player_level.level.title,
@@ -15,7 +16,7 @@ def csv_serializer(data):
 
 
 class ExportPrizesView(APIView):
-    def get(self, request):
+    def get(self, request) -> StreamingHttpResponse:
         iterator = PlayerPrize.objects.select_related(
             'player_level__player',
             'player_level__level',
