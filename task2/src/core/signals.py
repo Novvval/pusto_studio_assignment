@@ -8,11 +8,11 @@ from .models import PlayerLevel
 
 @receiver(pre_save, sender=PlayerLevel)
 def assign_date(sender, instance, **kwargs):
-    if instance.completed is None:
+    if instance.completed is None and instance.is_completed:
         instance.completed = timezone.now()
 
 
 @receiver(post_save, sender=PlayerLevel)
 def assign_prize(sender, instance, **kwargs):
-    if instance.completed is not None:
+    if instance.is_completed:
         instance.assign_prize()
